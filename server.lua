@@ -1,54 +1,81 @@
-Config = {}
-Config.DynamicWeather = true
-Config.Debug = true
-Config.WeatherTypes = {
-    'EXTRASUNNY', 
-    'CLEAR', 
-    'NEUTRAL', 
-    'SMOG', 
-    'FOGGY', 
-    'OVERCAST', 
-    'CLOUDS', 
-    'CLEARING', 
-    'RAIN', 
-    -- 'THUNDER', 
-    'SNOW', 
-    'BLIZZARD', 
-    'SNOWLIGHT', 
-    'XMAS', 
-    -- 'HALLOWEEN',
-}
-
 GlobalState.weather = 'EXTRASUNNY'
-GlobalState.time = {hour = 0, minute = 0}
--- weather
-Citizen.CreateThread(function()
+GlobalState.time = { hour = 12, minute = 0 }
+Weather = {}
+
+-- Weather
+CreateThread(function()
     while true do
         Wait(60000)
-        GlobalState.weather = Config.WeatherTypes[math.random(#Config.WeatherTypes)]
+        local currentWeather = GlobalState.weather
+        local flow = Config.WeatherTypes[currentWeather].flow
+        local nextWeather = Weather:Flow(flow)
+        GlobalState.weather = nextWeather.name
     end
 end)
 
--- time
-Citizen.CreateThread(function()
+---@param flow table
+---@return table
+function Weather:Flow(flow)
+    local totalChances = 0
+    for _, entry in pairs(flow) do
+        totalChances = totalChances + entry.chances
+    end
+
+    local randomValue = math.random(1, totalChances)
+    local cumulativeChances = 0
+
+    for _, entry in pairs(flow) do
+        cumulativeChances = cumulativeChances + entry.chances
+        if randomValue <= cumulativeChances then
+            return entry
+        end
+    end
+    -- Default to the first entry if something goes wrong
+    return flow[1], totalChances
+end
+
+-- Time
+CreateThread(function()
     while true do
         Wait(2000)
         setTime() --incrementing minutes
     end
 end)
 
-lib.addCommand('builtin.everyone', {'weather'}, function(source,args)
+lib.addCommand('weather', {
+    help = 'Set the weather',
+    params = {
+        {
+            name = 'weather',
+            help = 'The weather to set',
+            type = 'string'
+        }
+    },
+    restricted = 'group.admin',
+}, function(source, args, rawCommand)
     if not args.weather then return end
     GlobalState.weather = string.upper(args.weather)
-end, {'weather:?string'})
+end)
 
-lib.addCommand('builtin.everyone', {'time'}, function(source,args)
-    -- if not Config.Debug then return end
-    -- local hour, minute = 12, 00
-    -- if args.minute then minute = args.minute end
-    -- if args.hour then hour = args.hour end
-    GlobalState.time = {hour = args.hour or 12, minute = args.minute or 00}
-end, {'hour:?number', 'minute:?number'})
+lib.addCommand('time', {
+    help = 'Set the time',
+    params = {
+        {
+            name = 'hour',
+            help = 'The hour to set 00 - 23',
+            type = 'number'
+        },
+        {
+            name = 'minute',
+            help = 'The minute to set 00 - 59',
+            type = 'number'
+        }
+    },
+    restricted = 'group.admin',
+}, function(source, args, rawCommand)
+    if not args.hour or not args.minute then return end
+    GlobalState.time = { hour = args.hour, minute = args.minute }
+end)
 
 function setTime()
     local hour, minute = GlobalState.time.hour, GlobalState.time.minute
@@ -58,11 +85,11 @@ function setTime()
             hour = 0
             minute = 0
         else
-        minute = 0
-        hour = hour + 1
+            minute = 0
+            hour = hour + 1
         end
     else
         minute = minute + 1
     end
-    GlobalState.time = {hour = hour, minute = minute}
+    GlobalState.time = { hour = hour, minute = minute }
 end

@@ -14,9 +14,6 @@ dependencies {
 
 shared_scripts {
 	'@ox_lib/init.lua',
-	'locales/en.lua',
-	'locales/*.lua',
-	'config.lua'
 }
 
 client_scripts {
@@ -27,6 +24,7 @@ client_scripts {
 server_scripts {
 	'@oxmysql/lib/MySQL.lua',
 	'@ox_core/imports/server.lua',
+	'config.lua',
 	'server.lua'
 }
 
