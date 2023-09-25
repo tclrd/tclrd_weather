@@ -1,6 +1,5 @@
 Config = {}
 Config.DynamicWeather = true
-Config.Debug = true
 Config.Timescale = 2 -- number of ingame minutes to real life seconds
 
 Config.WeatherTypes = {

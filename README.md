@@ -26,17 +26,21 @@ start tclrd-weather
 ```
 
 ## Configuration
-- TODO
+View `config.lua` to change the default settings.
+
+`Config.TimeScale = 1` - Ratio of in-game minutes to real-world seconds (default: 2)
 
 ## Commands
-`/time [hour] (minute)` - Defaults to 12 00 if no hour / minute specified
-`/weather [type]` - Set weather
+`/time [hour] [minute]` - Defaults to 12 00 if no hour / minute specified
+
+`/weather [type]` - See [Native Reference - SetWeatherTypeNow](https://docs.fivem.net/docs/game-references/weather-types/) for available types
+
 `/blackout [true/false]` - Set blackout
 
 
 ## Exports
 
-### toggleSync [status]
+### setSync [status]
 ```lua
 ---@param status boolean
 exports['tclrd-weather']:setSync(status)

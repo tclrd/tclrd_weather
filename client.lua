@@ -2,7 +2,6 @@ local weatherSync, timeSync, blackoutSync = true, true, true
 local currentWeather = nil
 local blackout = false
 local hour, minute, second = 12, 0, 0
-local debug = false or GetConvarInt('tclrd_weather:debug', 0) == 1
 local Weather = {}
 
 NetworkOverrideClockMillisecondsPerGameMinute(1000)
