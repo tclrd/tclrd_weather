@@ -71,7 +71,7 @@ end)
 
 -- needs to be made into event netevent to be triggered by server for security
 ---@param value boolean
-RegisterNetEvent('setWeatherSyncing', function(value)
+RegisterNetEvent('weather:setSyncing', function(value)
     if value == nil then return end
     weatherSync = value
     if not weatherSync then

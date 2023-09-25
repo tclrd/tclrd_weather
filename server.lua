@@ -1,5 +1,6 @@
 GlobalState.weather = 'EXTRASUNNY'
 GlobalState.time = { hour = 12, minute = 0 }
+GlobalState.blackout = false
 Weather = {}
 
 -- Weather
@@ -31,13 +32,13 @@ function Weather:Flow(flow)
         end
     end
     -- Default to the first entry if something goes wrong
-    return flow[1], totalChances
+    return flow[1]
 end
 
 -- Time
 CreateThread(function()
     while true do
-        Wait(2000)
+        Wait(Config.Timescale * 1000)
         setTime() --incrementing minutes
     end
 end)
@@ -55,6 +56,7 @@ lib.addCommand('weather', {
 }, function(source, args, rawCommand)
     if not args.weather then return end
     GlobalState.weather = string.upper(args.weather)
+    lib.logger('Weather set to ' .. tostring(GlobalState.weather) .. ' by ' .. GetPlayerName(source))
 end)
 
 lib.addCommand('time', {
@@ -75,6 +77,15 @@ lib.addCommand('time', {
 }, function(source, args, rawCommand)
     if not args.hour or not args.minute then return end
     GlobalState.time = { hour = args.hour, minute = args.minute }
+    lib.logger('Time set to ' .. tostring(GlobalState.time) .. ' by ' .. GetPlayerName(source))
+end)
+
+lib.addCommand('blackout', {
+    help = 'Toggle blackout',
+    restricted = 'group.admin',
+}, function(source, args, rawCommand)
+    GlobalState.blackout = not GlobalState.blackout
+    lib.logger('Blackout toggled to ' .. tostring(GlobalState.blackout) .. ' by ' .. GetPlayerName(source))
 end)
 
 function setTime()
