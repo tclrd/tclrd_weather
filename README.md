@@ -28,6 +28,7 @@ start tclrd-weather
 ## Commands
 `/time [hour] (minute)` - Defaults to 12 00 if no hour / minute specified
 `/weather [type]` - Set weather
+`/blackout [true/false]` - Set blackout
 
 
 ## Exports
@@ -36,7 +37,7 @@ start tclrd-weather
 ```lua
 -- LUA EXAMPLE
 ---@param status boolean
-exports['tclrd-weathersync']:toggleSync(status)
+exports['tclrd-weather']:setSync(status)
 ```
 
 ## License

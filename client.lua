@@ -1,4 +1,4 @@
-local weatherSync, timeSync = true, true
+local weatherSync, timeSync, blackoutSync = true, true, true
 local currentWeather = nil
 local blackout = false
 local hour, minute, second = 12, 0, 0
@@ -22,9 +22,6 @@ function Weather:Sync()
                 return
             end
             if currentWeather == nil then return end
-            if debug then
-                print('weatherSyncing', currentWeather)
-            end
             SetWeatherTypeNow(currentWeather)
             ClearOverrideWeather()
             ClearWeatherTypePersist()
@@ -43,12 +40,25 @@ function Weather:Sync()
     end)
 end
 
+function Weather:Blackout()
+    if not blackoutSync then return end
+    SetArtificialLightsState(blackout)
+    SetArtificialLightsStateAffectsVehicles(blackout)
+end
+
 AddStateBagChangeHandler('weather', 'global', function(bagName, key, value, reserved, replicated)
     -- print(bagName, key, value, reserved, replicated)
     if not weatherSync then return end
     currentWeather = value
-    print('weather changed to', currentWeather)
+    -- print('weather changed to', currentWeather)
     SetWeatherTypeOvertimePersist(currentWeather, 30.0)
+end)
+
+AddStateBagChangeHandler('blackout', 'global', function(bagName, key, value, reserved, replicated)
+    -- print(bagName, key, value, reserved, replicated)
+    if not blackoutSync then return end
+    blackout = value
+    Weather:Blackout()
 end)
 
 AddStateBagChangeHandler('time', 'global', function(bagName, key, value, reserved, replicated)
@@ -69,22 +79,27 @@ AddStateBagChangeHandler('time', 'global', function(bagName, key, value, reserve
     end)
 end)
 
+
+
 -- needs to be made into event netevent to be triggered by server for security
+---@param type string
 ---@param value boolean
-RegisterNetEvent('weather:setSyncing', function(value)
-    if value == nil then return end
-    weatherSync = value
-    if not weatherSync then
-        SetWeatherTypeNow('CLEAR')
-    else
-        SetWeatherTypeNow(GlobalState.weather)
+RegisterNetEvent('weather:setSync', function(type, value)
+    if value == nil or type == nil then return end
+    if type ~= 'weather' and type ~= 'time' then return end
+    if type == 'weather' then
+        weatherSync = value
+        if not weatherSync then
+            SetWeatherTypeNow('CLEAR')
+        else
+            SetWeatherTypeNow(GlobalState.weather)
+        end
+    elseif type == 'time' then
+        timeSync = value
     end
 end)
 
 AddEventHandler('ox:playerLoaded', function(data)
-    if debug then
-        print('player loaded')
-    end
     Weather:Sync()
     NetworkOverrideClockTime(GlobalState.time.hour, GlobalState.time.minute, 00)
 end)

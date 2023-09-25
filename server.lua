@@ -35,13 +35,43 @@ function Weather:Flow(flow)
     return flow[1]
 end
 
+function Weather:SetTime()
+    local hour, minute = GlobalState.time.hour, GlobalState.time.minute
+    -- incrementing minutes
+    if minute == 59 then -- 23:59
+        if hour == 23 then
+            hour = 0
+            minute = 0
+        else
+            minute = 0
+            hour = hour + 1
+        end
+    else
+        minute = minute + 1
+    end
+    GlobalState.time = { hour = hour, minute = minute }
+end
+
 -- Time
 CreateThread(function()
     while true do
         Wait(Config.Timescale * 1000)
-        setTime() --incrementing minutes
+        Weather:SetTime() --incrementing minutes
     end
 end)
+
+-- Exports
+---@param source number
+---@param type string
+---@param value boolean
+---@return boolean
+local function setSync(source, type, value)
+    if source == nil or value == nil or type == nil then return false end
+    TriggerClientEvent('weather:setSync', source, type, value)
+    return true
+end
+
+exports('setSync', setSync)
 
 lib.addCommand('weather', {
     help = 'Set the weather',
@@ -87,20 +117,3 @@ lib.addCommand('blackout', {
     GlobalState.blackout = not GlobalState.blackout
     lib.logger('Blackout toggled to ' .. tostring(GlobalState.blackout) .. ' by ' .. GetPlayerName(source))
 end)
-
-function setTime()
-    local hour, minute = GlobalState.time.hour, GlobalState.time.minute
-    -- incrementing minutes
-    if minute == 59 then -- 23:59
-        if hour == 23 then
-            hour = 0
-            minute = 0
-        else
-            minute = 0
-            hour = hour + 1
-        end
-    else
-        minute = minute + 1
-    end
-    GlobalState.time = { hour = hour, minute = minute }
-end
