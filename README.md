@@ -1,6 +1,6 @@
-# tclrd-weathersync
+# tclrd-weather
 
-## Weather Syncing for FiveM
+## Weather System for OneSync Infinity
 
 :sunny: Time & Weather synchronization for any framework. :watch:
 
@@ -12,8 +12,11 @@
 
 - Weather synced across all clients using Global State
 - Time synced across all clients using Global State
+- Blackout synced across all clients using Global State
 - Exports to disable syncing (for inside shells)
-- 0.01ms CPU time
+- 0.00ms idle
+
+![resmon idle](https://i.imgur.com/WmP440g.png)
 
 ## Installation
 - Download the source files and place in your `resources` directory.
@@ -35,12 +38,9 @@ start tclrd-weather
 
 ### toggleSync [status]
 ```lua
--- LUA EXAMPLE
 ---@param status boolean
 exports['tclrd-weather']:setSync(status)
 ```
 
 ## License
-```
-
-```
+[![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://opensource.org/licenses/)
