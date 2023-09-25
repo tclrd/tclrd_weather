@@ -19,8 +19,8 @@
 ![resmon idle](https://i.imgur.com/WmP440g.png)
 
 ## Installation
-- Download the source files and place in your `resources` directory.
-- Add the script to your server.cfg
+Download the latest [release](https://github.com/tclrd/tclrd_weather/releases) and place in your `resources` directory.
+Add the script to your server.cfg
 ```
 start tclrd-weather
 ```
