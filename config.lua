@@ -1,6 +1,7 @@
 Config = {}
 Config.DynamicWeather = true
 Config.Timescale = 2 -- number of ingame minutes to real life seconds
+Config.WeatherInterval = 10 -- number of real life minutes to change weather
 
 Config.WeatherTypes = {
     EXTRASUNNY = {

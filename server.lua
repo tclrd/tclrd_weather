@@ -6,7 +6,7 @@ Weather = {}
 -- Weather
 CreateThread(function()
     while true do
-        Wait(60000)
+        Wait(Config.WeatherInterval * 60000)
         local currentWeather = GlobalState.weather
         local flow = Config.WeatherTypes[currentWeather].flow
         local nextWeather = Weather:Flow(flow)
